@@ -1,0 +1,110 @@
+{% extends 'raccourcis/base.html' %}
+{% load static %}
+<title>{% block title %}Liste des produits{% endblock %}</title>
+{% block content %}
+<div class="container">
+    <div class="page-inner">
+        <div class="d-flex align-items-left align-items-md-center flex-column flex-md-row pt-2 pb-4">
+            <h3 class="fw-bold mb-3">Tableau de bord</h3>
+        </div>
+        
+        <div class="row">
+            <div class="col-sm-6 col-md-3">
+                <div class="card card-stats card-round">
+                    <div class="card-body">
+                        <div class="row align-items-center">
+                            <div class="col-icon text-center">
+                                <div class="icon-big icon-primary bubble-shadow-small">
+                                    <i class="fas fa-users"></i>
+                                </div>
+                            </div>
+                            <div class="col col-stats ms-3">
+                                <div class="numbers">
+                                    <p class="card-category">Total produit</p>
+                                    <h4 class="card-title">{{ total_produits }}</h4>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="col-sm-6 col-md-3">
+                <div class="card card-stats card-round">
+                    <div class="card-body">
+                        <div class="row align-items-center">
+                            <div class="col-icon text-center">
+                                <div class="icon-big icon-success bubble-shadow-small">
+                                    <i class="fas fa-luggage-cart"></i>
+                                </div>
+                            </div>
+                            <div class="col col-stats ms-3">
+                                <div class="numbers">
+                                    <p class="card-category">Valeur stock</p>
+                                    <h4 class="card-title">{{ valeur_stock }} FCFA</h4>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="row mt-4">
+            <div class="col-md-12">
+                <div class="card">
+                    <div class="card-header d-flex align-items-center justify-content-between">
+                        <h4 class="card-title">Liste produit</h4>
+                        <a href="{% url 'creer_un_produit' %}" class="btn btn-primary btn-round">
+                            <i class="fa fa-plus"></i> Ajouter un produit
+                        </a>
+                    </div>
+                    <div class="card-body">
+                        <div class="table-responsive">
+                            <table id="add-row" class="table table-striped table-hover">
+                                <thead>
+                                    <tr>
+                                        <th>Nom</th>
+                                        <th>Description</th>
+                                        <th>Quantité</th>
+                                        <th>Prix unitaire</th>
+                                        <th>Prix total</th>
+                                        <th style="width: 10%">Action</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    {% for produit in produits %}
+                                    <tr>
+                                        <td>{{ produit.nom }}</td>
+                                        <td>{{ produit.description }}</td>
+                                        <td>{{ produit.quantite }}</td>
+                                        <td>{{ produit.prix }} FCFA</td>
+                                        <td>{{ produit.prix_total}} FCFA</td>
+                                        <td>
+                                            <div class="form-button-action">
+                                                <a href="{% url 'modif_produit' produit.id %}" class="btn btn-link btn-primary btn-lg">
+                                                    <i class="fa fa-edit"></i>
+                                                </a>
+                                                <a href="{% url 'sup_produit' produit.id %}" class="btn btn-link btn-danger">
+                                                    <i class="fa fa-times"></i>
+                                                </a>
+                                            </div>
+                                        </td>
+                                    </tr>
+                                    {% empty %}
+                                    <tr>
+                                        <td colspan="6" class="text-center">Aucun produit disponible</td>
+                                    </tr>
+                                    {% endfor %}
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+

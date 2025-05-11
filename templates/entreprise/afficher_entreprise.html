@@ -1,0 +1,21 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Informations de l'Entreprise</title>
+</head>
+<body>
+    <h1>Informations de l'Entreprise</h1>
+    {% if entreprise %}
+    <p>Nom : {{ entreprise.nom }}</p>
+    <p>IFU : {{ entreprise.ifu }}</p>
+    <p>Adresse : {{ entreprise.adresse }}</p>
+    <p>Téléphone : {{ entreprise.telephone }}</p>
+    <p>Email : {{ entreprise.email }}</p>
+    <p>Site Web : {{ entreprise.site_web }}</p>
+    {% else %}
+    <p>Aucune information disponible.</p>
+    {% endif %}
+</body>
+</html>

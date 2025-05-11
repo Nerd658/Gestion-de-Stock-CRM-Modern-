@@ -1,0 +1,155 @@
+{% comment %} <div class="sidebar">
+    <ul>
+        <li><a href="{% url 'dashboard' %}">Tableau de bord</a></li>
+        <li><a href="{% url 'gestion_stocks' %}">Stocks</a></li>
+        <li><a href="{% url 'clients' %}">Clients</a></li>
+        <li><a href="{% url 'fournisseurs' %}">Fournisseurs</a></li>
+        <li><a href="{% url 'ventes' %}">Ventes</a></li>
+        <li><a href="{% url 'caisse' %}">Caisse</a></li>
+        <li><a href="{% url 'alertes' %}">Alertes</a></li>
+        <li><a href="{% url 'liste_produit' %}">produits</a></li>
+    </ul>
+</div> {% endcomment %}
+<!-- Sidebar -->
+{% load static %}
+<div class="sidebar" data-background-color="dark">
+    <div class="sidebar-logo">
+      <!-- Logo Header -->
+      <div class="logo-header" data-background-color="dark">
+        <a href="{% url 'dashboard' %}" class="logo">
+          <img
+            src="{% static 'assets/img/kaiadmin/logo_light.svg' %}"
+            alt="navbar brand"
+            class="navbar-brand"
+            height="20"
+          />
+        </a>
+        <div class="nav-toggle">
+          <button class="btn btn-toggle toggle-sidebar">
+            <i class="gg-menu-right"></i>
+          </button>
+          <button class="btn btn-toggle sidenav-toggler">
+            <i class="gg-menu-left"></i>
+          </button>
+        </div>
+        <button class="topbar-toggler more">
+          <i class="gg-more-vertical-alt"></i>
+        </button>
+      </div>
+      <!-- End Logo Header -->
+    </div>
+    <div class="sidebar-wrapper scrollbar scrollbar-inner">
+      <div class="sidebar-content">
+        <ul class="nav nav-secondary">
+          <li class="nav-item active">
+            <a
+              data-bs-toggle="collapse"
+              href="{% url 'dashboard' %}"
+              class="logo"
+              aria-expanded="false">
+            
+              <i class="fas fa-home"></i>
+              <p>Dashboard</p>
+              
+            </a>
+          </li>
+          <li class="nav-section">
+            <span class="sidebar-mini-icon">
+              <i class="fa fa-ellipsis-h"></i>
+            </span>
+            <h4 class="text-section">Menu</h4>
+          </li>
+          <li class="nav-item">
+            <a href="{% url 'ajouter_transaction' %}"> 
+              
+              <i class="fas fa-wallet"></i>
+              <p>Caisse</p>
+            </a>
+          </li>
+          
+          <li class="nav-item">
+            <a data-bs-toggle="collapse" href="#tables">
+              <i class="fas fa-boxes"></i>
+              <p>Stocks</p>
+              <span class="caret"></span>
+            </a>
+            <div class="collapse" id="tables">
+              <ul class="nav nav-collapse">
+                <li>
+                  <a href="{% url 'liste_produit' %}">
+                    <span class="sub-item">Stocks</span>
+                  </a>
+                </li>
+                <li>
+                  <a href="{% url 'creer_un_produit' %}">
+                    <span class="sub-item">Ajouter un produit</span>
+                  </a>
+                </li>
+              </ul>
+            </div>
+          </li>
+          <li class="nav-item">
+            <a data-bs-toggle="collapse" href="#charts">
+              <i class="far fa-chart-bar"></i>
+              <p>Ventes</p>
+              <span class="caret"></span>
+            </a>
+            <div class="collapse" id="charts">
+              <ul class="nav nav-collapse">
+                <li>
+                  <a href="{% url 'ventes' %}">
+                    <span class="sub-item">Statistiques</span>
+                  </a>
+                </li>
+              </ul>
+            </div>
+          </li>
+          <li class="nav-item">
+            <a data-bs-toggle="collapse" href="#forms">
+              <i class="fas fa-handshake"></i>
+              <p>Partenaires</p>
+              <span class="caret"></span>
+            </a>
+            <div class="collapse" id="forms">
+              <ul class="nav nav-collapse">
+                <li>
+                  <a href="{% url 'clients' %}">
+                    <span class="sub-item">Clients</span>
+                  </a>
+                </li>
+                <li>
+                  <a href="{% url 'fournisseurs' %}">
+                    <span class="sub-item">Fournisseurs</span>
+                  </a>
+                </li>
+              </ul>
+            </div>
+          </li>
+          
+          <li class="nav-item">
+            <a href="{% url 'admin:auth_user_changelist' %}">
+              <i class="fas fa-users"></i>
+              <p>Comptes</p>
+              <span class="badge badge-success"></span>
+            </a>
+          </li>
+          
+          <li class="nav-item">
+            <a href="{% url 'alertes' %}">
+              <i class="fas fa-exclamation-triangle"></i>
+              <p>Alertes</p>
+              <span class="badge badge-success"></span>
+            </a>
+          </li>
+          <li class="nav-item">
+            <a href="{% url 'logout' %}">
+              <i class="fas fa-sign-out-alt"></i>
+              <p>Deconnexion</p>
+              <span class="badge badge-success"></span>
+            </a>
+          </li>
+        </ul>
+      </div>
+    </div>
+  </div>
+  <!-- End Sidebar -->

@@ -1,0 +1,14 @@
+{% extends 'raccourcis/base.html' %}
+{% load static %}
+{% block content %}
+<div class="container">
+    <div class="page-inner">
+        <form action="" method="POST">
+            {% csrf_token %}
+            <div class="text-center">
+                <button type="submit" class="btn btn-primary btn-lg">Supprimer le Produit {{ produit.nom }}</button>
+            </div>
+        </form>
+    </div>
+</div>
+{% endblock %}

@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Afficher les Bénéfices</title>
+</head>
+<body>
+    <h1>Liste des Bénéfices des Produits</h1>
+    <table>
+        <thead>
+            <tr>
+                <th>Nom du Produit</th>
+                <th>Prix de Vente</th>
+                <th>Prix d'Achat</th>
+                <th>Bénéfice</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for produit in benefices %}
+            <tr>
+                <td>{{ produit.nom }}</td>
+                <td>{{ produit.prix }}</td>
+                <td>{{ produit.prix_achat }}</td>
+                <td>{{ produit.benefice }}</td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+    <h2>Bénéfice Total des Produits : {{ benefice_total_ventes }}</h2>
+    <h2>Chiffre d'Affaires Total : {{ chiffre_affaires_total }}</h2>
+
+    <h2>Dernières Transactions</h2>
+    <table>
+        <thead>
+            <tr>
+                <th>Payment Number</th>
+                <th>Date</th>
+                <th>Montant</th>
+                <th>Bénéfice</th>
+                <th>Status</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for transaction in transactions %}
+            <tr>
+                <th scope="row">
+                    <button class="btn btn-icon btn-round btn-success btn-sm me-2">
+                        <i class="fa fa-check"></i>
+                    </button>
+                    Payment from #{{ transaction.payment_number }}
+                </th>
+                <td class="text-end">{{ transaction.date_transaction|date:"M d, Y, H:i a" }}</td>
+                <td class="text-end">{{ transaction.prix_total }} FCFA</td>
+                <td class="text-end">{{ transaction.benefice }} FCFA</td>
+                <td class="text-end">
+                    <span class="badge {% if transaction.status %}badge-success{% else %}badge-warning{% endif %}">
+                        {% if transaction.status %}Completed{% else %}Pending{% endif %}
+                    </span>
+                </td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</body>
+</html>

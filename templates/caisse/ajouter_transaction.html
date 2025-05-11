@@ -1,0 +1,240 @@
+{% extends 'raccourcis/base.html' %}
+{% load static %}
+<title>{% block title %}Caisse{% endblock %}</title>
+{% block content %}
+<div class="container my-5">
+    <div class="page-inner shadow p-4 rounded bg-light">
+        <p></p>
+        <h2 class="mb-4 text-center fw-bold text-primary">Ajouter une Transaction</h2>
+
+        {% for message in messages %}
+            <div class="alert alert-info">{{ message }}</div>
+        {% endfor %}
+
+        <div class="product-selection mb-4 p-4 bg-white shadow-sm rounded">
+            <input type="text" id="searchBar" class="form-control mb-3" onkeyup="filterProducts()" placeholder="Rechercher un produit...">
+            
+            <select name="produit_id" id="productSelect" class="form-select mb-3" required>
+                <option value="">-- Choisissez un produit --</option>
+                {% for produit in produits %}
+                    <option value="{{ produit.id }}" data-price="{{ produit.prix }}" data-stock="{{ produit.quantite }}">
+                        <span class="product-name">{{ produit.nom }}</span> - 
+                        <span class="product-price">{{ produit.prix |floatformat:0}} FCFA</span>
+                        <span class="product-stock">(En Stock: {{ produit.quantite }})</span>
+                    </option>
+                {% endfor %}
+            </select>
+
+            <input type="number" id="quantity" name="quantite_vendue" min="1" class="form-control mb-3" placeholder="Quantité" required>
+            <button class="btn btn-primary w-100" onclick="addProduct()">Ajouter au panier</button>
+        </div>
+
+        <hr class="my-4">
+
+        <table id="cartTable" class="table table-striped table-bordered">
+            <thead class="table-dark">
+                <tr>
+                    <th>Produit</th>
+                    <th>Quantité</th>
+                    <th>Prix Unitaire</th>
+                    <th>Total TTC</th>
+                </tr>
+            </thead>
+            <tbody id="cartBody">
+                <!-- Produits ajoutés s'afficheront ici -->
+            </tbody>
+        </table>
+
+        <div class="text-end mt-3">
+            <button class="btn btn-success btn-lg" onclick="showInvoice()">Continuer</button>
+        </div>
+
+        <!-- Section de la facture -->
+        <div class="container" id="invoicePage" style="display: none; margin-top: 20px;">
+            <h2 class="mb-4 text-center fw-bold text-success">Facture</h2>
+
+            <table id="invoiceTable" class="table table-bordered shadow-sm">
+                <thead class="table-secondary">
+                    <tr>
+                        <th>Produit</th>
+                        <th>Quantité</th>
+                        <th>Prix Unitaire (TTC)</th>
+                        <th>Total TTC</th>
+                    </tr>
+                </thead>
+                <tbody id="invoiceBody">
+                    <!-- Détails de la facture -->
+                </tbody>
+            </table>
+
+            <p id="invoiceTotal" class="text-end fw-bold fs-5">Total: </p>
+            <div class="mb-3">
+                <label for="methodePaiement" class="form-label">Méthode de Paiement</label>
+                <select name="methode_paiement" id="methodePaiement" class="form-select" required>
+                    <option value="">-- Choisissez une méthode --</option>
+                    {% for code, libelle in mode_de_paiement_choices.items %}
+                        <option value="{{ code }}">{{ libelle }}</option>
+                    {% endfor %}
+                </select>
+            </div>
+            <div class="text-center">
+                <button class="btn btn-primary btn-lg" onclick="validateInvoice()">Valider la facture</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+<style>
+    /* Amélioration de l'apparence générale */
+    .page-inner {
+        background-color: #f8f9fa;
+        padding: 30px;
+        border-radius: 8px;
+    }
+    .product-selection {
+        border: 1px solid #ddd;
+        padding: 15px;
+        background: #f5f5f5;
+        border-radius: 8px;
+    }
+    h2 {
+        color: #007bff;
+        font-weight: 700;
+    }
+    .form-control, .form-select {
+        border-radius: 8px;
+        border: 1px solid #ced4da;
+    }
+    .form-control:focus, .form-select:focus {
+        border-color: #007bff;
+        box-shadow: 0 0 4px rgba(0, 123, 255, 0.2);
+    }
+    .btn-primary, .btn-success {
+        border-radius: 8px;
+        font-weight: 600;
+        transition: all 0.3s ease;
+    }
+    .btn-primary:hover, .btn-success:hover {
+        transform: translateY(-2px);
+        box-shadow: 0px 4px 12px rgba(0, 123, 255, 0.2);
+    }
+    /* Tableau de style amélioré */
+    .table {
+        border-radius: 8px;
+        overflow: hidden;
+    }
+    .table thead {
+        background-color: #343a40;
+        color: #fff;
+    }
+    .table-bordered th, .table-bordered td {
+        border: 1px solid #dee2e6;
+    }
+    
+</style>
+
+<script>
+    let cart = [];
+    
+
+    function addProduct() {
+        const productSelect = document.getElementById("productSelect");
+        const quantityInput = document.getElementById("quantity");
+
+        const productId = productSelect.value;
+        const productName = productSelect.options[productSelect.selectedIndex].text.split(" - ")[0];
+        const productPrice = parseFloat(productSelect.options[productSelect.selectedIndex].getAttribute("data-price"));
+        const productStock = parseInt(productSelect.options[productSelect.selectedIndex].getAttribute("data-stock"));
+        const quantity = parseInt(quantityInput.value);
+
+        // Vérification de la quantité demandée par rapport au stock disponible
+        if (quantity > productStock) {
+            alert(`Désolé, le stock est insuffisant pour ce produit. Stock disponible : ${productStock}`);
+            return;
+        }
+
+        if (productId && quantity > 0) {
+            cart.push({ produit_id: productId, name: productName, price: productPrice, quantite_vendue: quantity });
+            renderCart();
+            productSelect.selectedIndex = 0;
+            quantityInput.value = "";
+        }
+    }
+
+    function renderCart() {
+        const cartBody = document.getElementById("cartBody");
+        cartBody.innerHTML = "";
+        cart.forEach(item => {
+            const row = document.createElement("tr");
+            row.innerHTML = `
+                <td>${item.name}</td>
+                <td>${item.quantite_vendue}</td>
+                <td>${item.price.toFixed(2)}FCFA</td>
+                <td>${(item.price * item.quantite_vendue).toFixed(2)}FCFA</td>
+            `;
+            cartBody.appendChild(row);
+        });
+    }
+
+    function showInvoice() {
+        if (cart.length === 0) {
+            alert("Le panier est vide. Ajoutez des produits avant de continuer.");
+            return;
+        }
+
+        document.getElementById("invoicePage").style.display = "block";
+        const invoiceBody = document.getElementById("invoiceBody");
+        invoiceBody.innerHTML = "";
+
+        let totalAmount = 0;
+        cart.forEach(item => {
+            const row = document.createElement("tr");
+            const itemTotal = item.price * item.quantite_vendue;
+            totalAmount += itemTotal;
+
+            row.innerHTML = `
+                <td>${item.name}</td>
+                <td>${item.quantite_vendue}</td>
+                <td>${item.price.toFixed(2)}FCFA</td>
+                <td>${itemTotal.toFixed(2)}FCFA</td>
+            `;
+            invoiceBody.appendChild(row);
+        });
+
+        document.getElementById("invoiceTotal").textContent = `Total : ${totalAmount.toFixed(2)}FCFA`;
+    }
+
+    function validateInvoice() {
+        const totalAmount = parseFloat(document.getElementById("invoiceTotal").textContent.replace("Total : ", "").replace("FCFA", "").trim());
+        // Récupérer la méthode de paiement sélectionnée
+        const methodePaiement = document.getElementById("methodePaiement").value;
+        // Vérifier si une méthode de paiement a été choisie
+        if (!methodePaiement) {
+            alert("Veuillez choisir une méthode de paiement.");
+            return;
+        }
+        fetch("{% url 'ajouter_transaction' %}", {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json",
+                "X-CSRFToken": "{{ csrf_token }}"
+            },
+            body: JSON.stringify({ cart , totalAmount , methodePaiement })
+        })
+        .then(response => response.json())
+        .then(data => {
+            if (data.success) {
+                alert(data.message);
+                cart = [];
+                location.reload();
+                document.getElementById("invoicePage").style.display = "none";
+            } else {
+                alert(data.message); // Message d'erreur si stock insuffisant lors de la validation
+            }
+        });
+    }
+</script>
+{% endblock %}
+
+
